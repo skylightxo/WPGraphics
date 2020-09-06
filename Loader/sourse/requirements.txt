@@ -1,0 +1,4 @@
+aiomysql
+requests
+pandas
+BeautifulSoup4
