@@ -56,19 +56,19 @@ class DataExtractor
         {
             $query = "SELECT date, value 
                     FROM courses.%s
-                    WHERE date BETWEEN NOW() - INTERVAL 1 DAY AND NOW();";
+                    WHERE date BETWEEN NOW() - INTERVAL 1 DAY AND NOW() ;";
         }
         else if ($timeperiod == "month")
         {
             $query = "SELECT date, value 
                     FROM courses.%s
-                    WHERE date BETWEEN NOW() - INTERVAL 30 DAY AND NOW();";
+                    WHERE id % 30 == 0 AND date BETWEEN NOW() - INTERVAL 30 DAY AND NOW();";
         }
         else if ($timeperiod == "year")
         {
             $query = "SELECT date, value 
                     FROM courses.%s
-                    WHERE date BETWEEN NOW() - INTERVAL 365 DAY AND NOW();";
+                    WHERE id % 365 == 0 date BETWEEN NOW() - INTERVAL 365 DAY AND NOW();";
         }
         else
         {
