@@ -105,7 +105,7 @@ class DataExtractor
                 echo "\"labels\": [";
                 foreach ($data as $i => $dat)
                 {
-                    echo '"'.$dat[0].($i != count($data) - 1 ? '", ' : '"');
+                    echo '"'.($timeperiod != "day" ? $timeperiod == "year" ? substr($dat[0], 0, 10) : substr($dat[0], 0, 13)."h" : substr($dat[0], 11)).($i != count($data) - 1 ? '", ' : '"');
                 }
                 echo "], ";
 
