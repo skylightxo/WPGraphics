@@ -17,7 +17,7 @@ class DataBaseConnector:
     ) -> None:
         async with self.conn.cursor() as cur:
             # NOTE: SQL Injections not possible due to not using input data
-            sql = f"INSERT INTO `{pair}`(`value`) VALUES ('{round(value, 3)}')"
+            sql = f"INSERT INTO `{pair}`(`value`) VALUES ('{value}')"
             await cur.execute(sql)
         await self.conn.commit()
 
@@ -32,7 +32,7 @@ class DataBaseConnector:
         """
 
         config = configparser.ConfigParser()
-        config.read("config.ini")
+        config.read("./config.ini")
         dbinfo = config["MySQL"]
 
         conn = await aiomysql.connect(
@@ -47,38 +47,15 @@ class DataBaseConnector:
         async with conn.cursor() as cur:
             await cur.execute("CREATE DATABASE IF NOT EXISTS `courses`")
             await cur.execute("USE `courses`")
-            await cur.execute(
-                "CREATE TABLE IF NOT EXISTS `UAHUSD`("
-                "   `id` int NOT NULL AUTO_INCREMENT,"
-                "   `value` float NOT NULL,"
-                "   `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,"
-                "   PRIMARY KEY(`id`)"
-                ")"
-            )
-            await cur.execute(
-                "CREATE TABLE IF NOT EXISTS `EURUSD`("
-                "   `id` int NOT NULL AUTO_INCREMENT,"
-                "   `value` float NOT NULL,"
-                "   `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,"
-                "   PRIMARY KEY(`id`)"
-                ")"
-            )
-            await cur.execute(
-                "CREATE TABLE IF NOT EXISTS `BTCUSDT`("
-                "   `id` int NOT NULL AUTO_INCREMENT,"
-                "   `value` float NOT NULL,"
-                "   `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,"
-                "   PRIMARY KEY(`id`)"
-                ")"
-            )
-            await cur.execute(
-                "CREATE TABLE IF NOT EXISTS `XAUUSD`("
-                "   `id` int NOT NULL AUTO_INCREMENT,"
-                "   `value` float NOT NULL,"
-                "   `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,"
-                "   PRIMARY KEY(`id`)"
-                ")"
-            )
+            for pair in ["UAHUSD", "EURUSD", "BTCUSDT", "XAUUSD"]:
+                await cur.execute(
+                    f"CREATE TABLE IF NOT EXISTS `{pair}`("
+                    "   `id` int NOT NULL AUTO_INCREMENT,"
+                    "   `value` float NOT NULL,"
+                    "   `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,"
+                    "   PRIMARY KEY(`id`)"
+                    ")"
+                )
 
         return conn
 

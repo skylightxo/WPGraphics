@@ -5,6 +5,7 @@ import requests
 import pandas as pd
 import json
 import asyncio
+import os
 
 
 async def load_table_from_kurs() -> pd.DataFrame:
@@ -36,7 +37,7 @@ async def load_UAHUSD_price() -> float:
         float: Current UAHUSD price
     """
 
-    return float((await load_table_from_kurs()).loc["USD", "Col_3"])
+    return round(float((await load_table_from_kurs()).loc["USD", "Col_3"]), 2)
 
 
 async def load_EURUSD_price() -> float:
@@ -50,7 +51,7 @@ async def load_EURUSD_price() -> float:
     page = requests.get(url)
 
     data = page.json()
-    return float(data["rates"]["EURUSD"]["rate"])
+    return round(float(data["rates"]["EURUSD"]["rate"]), 3)
 
 
 async def load_BTCUSDT_price() -> float:
@@ -63,7 +64,7 @@ async def load_BTCUSDT_price() -> float:
     data = requests.get(
         f"http://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT"
     ).json()
-    return float(data["price"])
+    return round(float(data["price"]))
 
 
 async def load_XAUUSD_price() -> float:
@@ -77,25 +78,43 @@ async def load_XAUUSD_price() -> float:
         "https://forex-data-feed.swissquote.com/public-quotes/bboquotes/instrument/XAU/USD"
     ).json()
     info = data[0]["spreadProfilePrices"][0]
-    return (float(info["bid"]) + float(info["ask"])) / 2 / 31.1
+    return round((float(info["bid"]) + float(info["ask"])) / 2 / 31.1, 3)
 
 
 async def main():
-    conn = await DataBaseConnector.connect()
+    try:
+        conn = await DataBaseConnector.connect()
+    except Exception as e:
+        print("\n----- Critical -----")
+        print("An error occured while trying to connect to database.")
+        print("Configure MySQL server data in config.ini or double check the info.")
+        print(f"\nAdditinal data: [{e.__class__.__name__}] {e}")
+        return
 
     while True:
-        values = await asyncio.gather(
-            load_UAHUSD_price(),
-            load_EURUSD_price(),
-            load_XAUUSD_price(),
-            load_BTCUSDT_price(),
-        )
+        print("Loading price data...")
+        try:
+            values = await asyncio.gather(
+                load_UAHUSD_price(),
+                load_EURUSD_price(),
+                load_XAUUSD_price(),
+                load_BTCUSDT_price(),
+            )
+        except Exception as e:
+            print(
+                f"Error: could not load the data, trying again in 30 seconds \nAdditional data: [{e.__class__.__name__}] {e}"
+            )
+            await asyncio.sleep(30)
+        else:
+            for pair, value in zip(["UAHUSD", "EURUSD", "XAUUSD", "BTCUSDT"], values):
+                await conn.add_data(pair, value)  # type: ignore
+                print(f"    Added {pair} price: {value}")
 
-        for pair, value in zip(["UAHUSD", "EURUSD", "XAUUSD", "BTCUSDT"], values):
-            await conn.add_data(pair, value)  # type: ignore
+            print(f"Finished! Waiting 5 minutes...")
 
-        await asyncio.sleep(5 * 60)
+            await asyncio.sleep(5 * 60)
 
 
 if __name__ == "__main__":
     asyncio.run(main())
+    os.system("pause")
