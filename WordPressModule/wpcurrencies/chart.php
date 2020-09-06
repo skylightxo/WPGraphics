@@ -27,6 +27,7 @@ function wp_currencies_draw_plot()
             justify-content: center;
             align-items: center;
             text-align: center;
+			margin: 7px 0;
         }
         .row-btn {
             width: 25%;
@@ -34,7 +35,7 @@ function wp_currencies_draw_plot()
             border: 1px solid #000;
             margin-bottom: 0;
             font-weight: normal;
-			font-size: smaller;
+			font-size: x-small;
             text-decoration: none;
             cursor: pointer;
         }
@@ -51,7 +52,7 @@ function wp_currencies_draw_plot()
 			border: 1px solid #000;
 			margin-bottom: 0;
 			font-weight: normal;
-			font-size: smaller;
+			font-size: x-small;
 			text-decoration: none;
 			cursor: pointer;
 		  }
@@ -70,7 +71,9 @@ function wp_currencies_draw_plot()
         </style>
         <div class="chart-container">
       <div id="pairs-row" class="row"></div>
-      <canvas class="chart" id="myChart" width="400" height="350"></canvas>
+	  <div>
+		<canvas class="chart" id="myChart" height="400"></canvas>
+	  </div>
       <div id="time-row" class="row">
         <div id="selectedOptions" class="row-time"></div>
       </div>
