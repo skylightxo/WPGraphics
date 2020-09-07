@@ -206,6 +206,10 @@ function wp_currencies_draw_plot()
         chart.update();
       };
       displayReqChart(myChart);
+      displayReqChart(myChart);
+      displayReqChart(myChart);
+      displayReqChart(myChart);
+      displayReqChart(myChart);
     </script>
 <?php
 }
