@@ -205,11 +205,7 @@ function wp_currencies_draw_plot()
         chart.data.datasets[0].data = data[selectedPair][selectedTime].y;
         chart.update();
       };
-      displayReqChart(myChart);
-      displayReqChart(myChart);
-      displayReqChart(myChart);
-      displayReqChart(myChart);
-      displayReqChart(myChart);
+      setTimeout(displayReqChart(myChart), 0);
     </script>
 <?php
 }
