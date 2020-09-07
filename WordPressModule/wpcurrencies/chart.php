@@ -205,12 +205,9 @@ function wp_currencies_draw_plot()
         chart.data.datasets[0].data = data[selectedPair][selectedTime].y;
         chart.update();
       };
-      const renderReqChart = (chart) => {
-        chart.data.labels = data[selectedPair][selectedTime].labels;
-        chart.data.datasets[0].data = data[selectedPair][selectedTime].y;
-        chart.render();
-      }
       setTimeout(renderReqChart(myChart), 0);
+      setTimeout(myChart.resize(), 10);
+      setTimeout(myChart.resize(), 15);
     </script>
 <?php
 }
