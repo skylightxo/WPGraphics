@@ -92,7 +92,7 @@ function wp_currencies_draw_plot()
         });
         const res = await response.json();
         data = res;
-        displayReqChart(myChart);
+        updateReqChart(myChart);
       }
       setInterval(postData, 60 * 1000);
 
@@ -186,7 +186,7 @@ function wp_currencies_draw_plot()
         pairBtns[i].addEventListener("click", function () {
           deactivateBtns(pairBtns, i);
           selectedPair = this.childNodes[0].data;
-          displayReqChart(myChart);
+          updateReqChart(myChart);
           displaySelectedPairAndValue();
         });
       }
@@ -195,17 +195,22 @@ function wp_currencies_draw_plot()
         timeBtns[i].addEventListener("click", function () {
           deactivateBtns(timeBtns, i);
           selectedTime = this.childNodes[0].data;
-          displayReqChart(myChart);
+          updateReqChart(myChart);
           displaySelectedPairAndValue();
         });
       }
 
-      const displayReqChart = (chart) => {
+      const updateReqChart = (chart) => {
         chart.data.labels = data[selectedPair][selectedTime].labels;
         chart.data.datasets[0].data = data[selectedPair][selectedTime].y;
         chart.update();
       };
-      setTimeout(displayReqChart(myChart), 0);
+      const renderReqChart = (chart) => {
+        chart.data.labels = data[selectedPair][selectedTime].labels;
+        chart.data.datasets[0].data = data[selectedPair][selectedTime].y;
+        chart.render();
+      }
+      setTimeout(renderReqChart(myChart), 0);
     </script>
 <?php
 }
